@@ -1,31 +1,13 @@
 <script setup>
-import {query, collection, getDocs } from 'firebase/firestore'
-import { ref, onMounted } from 'vue';
-import db from '../firebase/init.js'
-
-const todos = ref([])
-
-    async function getTodos () {
-    const coll = collection (db, 'todos')
-    const querySnap = await getDocs (query(coll)) 
-    todos.value = []
-    querySnap.forEach((doc) => {
-        let data = doc.data()
-        data.id = doc.id
-        todos.value.push(data)
-    })
-}
-
-onMounted(() => { 
-    getTodos ()
-}) 
-
+defineProps(['todos'])
 </script>
 <template>
 
     <ul>
-        <li v-for="todo in todos" key="todo.title">
-        {{todo.title}}
+        <li v-for="(todo,index) in todos" :key="todo.title">
+        {{todo.title}} 
+        <button @click="$emit('toggleComplete',index)">{{todo.completed?"UnComplete":"Complete"}}</button>
+        <button @click="$emit('deleteTodo',index)">delete</button>
         </li>
     </ul>
 </template>
